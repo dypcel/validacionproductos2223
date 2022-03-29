@@ -10,11 +10,13 @@
 5. Bajar y hacer clic en el botón Commit changes para guardar los cambios y finalizar la creación del directorio.
 
 ### Para subir archivos:
-1. Hacer clic en el botón Add file > Upload file.
+1. Ubicarse en el directorio donde se va a subir el archivo.
 
-2. Escoger el archivo a subir.
+2. Hacer clic en el botón Add file > Upload file.
 
-3. Hacer clic en el botón Commit changes para guardar los cambios.
+3. Escoger el archivo a subir.
+
+4. Hacer clic en el botón Commit changes para guardar los cambios.
 
 ### Para subir navegables de Canva o Genially:
 1. Ubicarse en el directorio donde se va a subir el navegable.
