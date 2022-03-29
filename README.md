@@ -15,3 +15,14 @@
 2. Escoger el archivo a subir.
 
 3. Hacer clic en el botón Commit changes para guardar los cambios.
+
+### Para subir navegables de Canva o Genially:
+1. Ubicarse en el directorio donde se va a subir el navegable.
+
+2. Hacer clic en el botón Add file > Create new file.
+
+3. En la caja de texto colocar el nombre del archivo a crear con la extensión .html
+
+4. En el archivo, pegar el código embebido del navegable.
+
+5. Para finalizar, guardar los cambios haciendo clic en el botón Commit changes.
