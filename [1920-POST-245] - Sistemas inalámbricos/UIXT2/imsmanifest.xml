@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest identifier="_5jW4OwoxNzg_course_id" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+    <lom xmlns="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd">
+      <general>
+        <title>
+          <langstring xml:lang="x-none">Arquitectura de un sistema satelital</langstring>
+        </title>
+      </general>
+      <lifecycle>
+        <version>
+          <langstring xml:lang="x-none">1</langstring>
+        </version>
+        <status>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">Final</langstring>
+          </value>
+        </status>
+      </lifecycle>
+      <metametadata>
+        <metadatascheme>ADL SCORM 1.2</metadatascheme>
+      </metametadata>
+      <educational>
+        <typicallearningtime>
+          <datetime>PT0H0M0S</datetime>
+        </typicallearningtime>
+      </educational>
+      <rights>
+        <cost>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">yes</langstring>
+          </value>
+        </cost>
+        <copyrightandotherrestrictions>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">yes</langstring>
+          </value>
+        </copyrightandotherrestrictions>
+      </rights>
+    </lom>
+  </metadata>
+  <organizations default="Arquitectura_de_un_sistema_satelital_ORG">
+    <organization identifier="Arquitectura_de_un_sistema_satelital_ORG">
+      <title>Arquitectura de un sistema satelital</title>
+      <item identifier="Arquitectura_de_un_sistema_satelital_SCO" isvisible="true" identifierref="__5jW4OwoxNzg_course_id_RES">
+        <title>Arquitectura de un sistema satelital</title>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="__5jW4OwoxNzg_course_id_RES" type="webcontent" href="index_lms.html" adlcp:scormtype="sco">
+      <file href="story_content/thumbnail.jpg" />
+      <file href="mobile/5f9AimIFqyN_80_DX2800_DY2800_CX1400_CY700.jpg" />
+      <file href="mobile/6b08xZTFDv1_80_DX600_DY600_CX443_CY67.png" />
+      <file href="mobile/5YLsocL4RyI_80_DX254_DY254_CX189_CY70.png" />
+      <file href="mobile/64k3p4wRbOF_80_DX1554_DY1554_CX1165_CY177.png" />
+      <file href="mobile/5v0A1p4Uo9X_80_DX1490_DY1490_CX993_CY919.png" />
+      <file href="mobile/5hSXQS1XGgX_80_DX2800_DY2800_CX1400_CY700.jpg" />
+      <file href="mobile/6MjSuWSVIf2_80_DX114_DY114_CX85_CY83.png" />
+      <file href="mobile/62hwsOVV8gi_X_80_R9BF2FF_DX72_DY72_CX54_CY54.png" />
+      <file href="mobile/5ZZCtwtslhA_80_DX80_DY80_CX60_CY60.png" />
+      <file href="mobile/6PpBXdeUBtD_80_DX80_DY80_CX60_CY60.png" />
+      <file href="mobile/5hQ5ROKN2Ph_80_DX1280_DY1280_CX640_CY428.jpg" />
+      <file href="mobile/5ifuWU83P8I_80_DX208_DY208_CX129_CY156.png" />
+      <file href="mobile/5q2JGiC55Dn_X_80_DX634_DY634_CX475_CY282.png" />
+      <file href="mobile/6Au2mKdPkCY_80_DX352_DY352_CX200_CY264.png" />
+      <file href="mobile/6Au2mKdPkCY_X_80_DX352_DY352_CX200_CY264.png" />
+      <file href="mobile/66kRL2z0RuO_80_DX1748_DY1748_CX874_CY294.png" />
+      <file href="mobile/6rFhZnhjfDI_80_DX70_DY70_CX52_CY52.png" />
+      <file href="mobile/6Nguvkg0UHt_80_DX208_DY208_CX156_CY156.png" />
+      <file href="mobile/6G0fVhRCXr8_Y_80_DX160_DY160_CX120_CY120.png" />
+      <file href="mobile/6IUlLiUhjzg_80_DX1224_DY1224_CX612_CY408.png" />
+      <file href="mobile/6gegAOW98QP_80_DX200_DY200_CX150_CY150.png" />
+      <file href="mobile/6omOOkb6sag_80_P_286_264_529_254_DX1650_DY1650_CX530_CY254.png" />
+      <file href="mobile/6YspYUtg7Fr_80_DX140_DY140_CX105_CY105.png" />
+      <file href="mobile/6YspYUtg7Fr_X_80_DX140_DY140_CX105_CY105.png" />
+      <file href="mobile/5w0Owq3eBV9_80_DX2800_DY2800_CX1400_CY700.png" />
+      <file href="mobile/6B233v6KXuj_Y_80_DX2482_DY2482_CX1162_CY633.png" />
+      <file href="mobile/5WfYpsn9qBj_80_DX1110_DY1110_CX832_CY168.png" />
+      <file href="mobile/5aDTUlTk8Ad_80_DX640_DY640_CX462_CY164.png" />
+      <file href="mobile/6mddj8aeZ83_80_DX2800_DY2800_CX1400_CY700.png" />
+      <file href="mobile/6aqC9WOnagy_X_80_P_285_0_474_500_DX1600_DY1600_CX474_CY500.jpg" />
+      <file href="meta.xml" />
+      <file href="story_content/user.js" />
+      <file href="mobile/txt__default_5xHmnmcWpyF.png" />
+      <file href="mobile/txt__default_5yLAfpTGEAh.png" />
+      <file href="mobile/txt__default_6cGkxXmv00h.png" />
+      <file href="mobile/txt__default_639JDVh7WCu.png" />
+      <file href="mobile/txt__default_6PVF7SlxXnm.png" />
+      <file href="mobile/txt__default_6q5qic3yQfu.png" />
+      <file href="mobile/txt__default_6c8gbeVwg69.png" />
+      <file href="mobile/txt__default_5gz4uU7emb1.png" />
+      <file href="mobile/Shape5lWNMqe3pRr.png" />
+      <file href="mobile/txt__default_5mMYjXMGBNM.png" />
+      <file href="mobile/txt__default_61ttF4p34sM.png" />
+      <file href="mobile/txt__default_6EHWZRG7SGt.png" />
+      <file href="mobile/txt__default_6lDECIV8T1h.png" />
+      <file href="mobile/txt__default_5mEmDtXpNeS.png" />
+      <file href="mobile/txt__default_6OFGUykhZQx.png" />
+      <file href="mobile/txt__default_6Kc2gpnvOIu.png" />
+      <file href="mobile/txt__default_6kA26n1Y6jk.png" />
+      <file href="mobile/txt__default_5kLBJFRLxJh.png" />
+      <file href="mobile/txt__default_5gXKNTwheAC.png" />
+      <file href="mobile/txt__default_5a2WevWNLCj.png" />
+      <file href="mobile/txt__default_6iXLiHqon35.png" />
+      <file href="mobile/txt__default_5uKcvLiwpPF.png" />
+      <file href="mobile/txt__default_6aaSDMG23Et.png" />
+      <file href="html5/data/css/output.min.css" />
+      <file href="html5/data/js/5bFzLaF8aa1.js" />
+      <file href="html5/data/js/5dHB2wcjjDT.js" />
+      <file href="html5/data/js/5hpGsIZsqzU.js" />
+      <file href="html5/data/js/5lMNflNlEYi.js" />
+      <file href="html5/data/js/5VfHTq7BGnd.js" />
+      <file href="html5/data/js/5wj9DAD1hFG.js" />
+      <file href="html5/data/js/5WqXZGESApv.js" />
+      <file href="html5/data/js/5y4jNimHlJG.js" />
+      <file href="html5/data/js/62xU9psRlQJ.js" />
+      <file href="html5/data/js/63GKldPEPQT.js" />
+      <file href="html5/data/js/6ClXiK91fnU.js" />
+      <file href="html5/data/js/6gWeNwpCh2j.js" />
+      <file href="html5/data/js/6kPgCRgJ4nG.js" />
+      <file href="html5/data/js/6LuQPrfepcU.js" />
+      <file href="html5/data/js/6MchzBGOmCX.js" />
+      <file href="html5/data/js/6oTqx2mtgtT.js" />
+      <file href="html5/data/js/6P6iuHNWwDX.js" />
+      <file href="html5/data/js/6XTkFcpj8rw.js" />
+      <file href="html5/data/js/data.js" />
+      <file href="html5/data/js/frame.js" />
+      <file href="html5/data/js/paths.js" />
+      <file href="html5/lib/scripts/bootstrapper.min.js" />
+      <file href="html5/lib/scripts/frame.desktop.min.js" />
+      <file href="html5/lib/scripts/frame.mobile.min.js" />
+      <file href="html5/lib/scripts/slides.min.js" />
+      <file href="html5/lib/stylesheets/desktop.min.css" />
+      <file href="html5/lib/stylesheets/mobile.min.css" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-bold.woff" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-light.woff" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-regular.woff" />
+      <file href="analytics-frame.html" />
+      <file href="story.html" />
+      <file href="index_lms.html" />
+      <file href="lms/AICCComm.html" />
+      <file href="lms/blank.html" />
+      <file href="lms/browsersniff.js" />
+      <file href="lms/goodbye.html" />
+      <file href="lms/scormdriver.js" />
+    </resource>
+  </resources>
+</manifest>
