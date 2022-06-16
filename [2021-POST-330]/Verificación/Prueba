@@ -1,1 +1,2378 @@
 
+<?xml version="1.0"?>
+<!-- filename=adlcp_rootv1p2.xsd -->
+<!-- Conforms to w3c http://www.w3.org/TR/xmlschema-1/ 2000-10-24-->
+
+<xsd:schema xmlns="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+            targetNamespace="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+            xmlns:xml="http://www.w3.org/XML/1998/namespace"
+            xmlns:imscp="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="unqualified"
+            version="ADL Version 1.2">
+
+        <xsd:import namespace="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+         schemaLocation="imscp_rootv1p1p2.xsd"/>
+
+        <xsd:element name="location" type="locationType"/>
+        <xsd:element name="prerequisites" type="prerequisitesType"/>
+        <xsd:element name="maxtimeallowed" type="maxtimeallowedType"/>
+        <xsd:element name="timelimitaction" type="timelimitactionType"/>
+        <xsd:element name="datafromlms" type="datafromlmsType"/>
+        <xsd:element name="masteryscore" type="masteryscoreType"/>
+
+
+        <xsd:element name="schema" type="newSchemaType"/>
+        <xsd:simpleType name="newSchemaType">
+                <xsd:restriction base="imscp:schemaType">
+                        <xsd:enumeration value="ADL SCORM"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+        <xsd:element name="schemaversion" type="newSchemaversionType"/>
+        <xsd:simpleType name="newSchemaversionType">
+                <xsd:restriction base="imscp:schemaversionType">
+                        <xsd:enumeration value="1.2"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+
+        <xsd:attribute name="scormtype">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                   <xsd:enumeration value="asset"/>
+                   <xsd:enumeration value="sco"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+
+        <xsd:simpleType name="locationType">
+                <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="2000"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+
+        <xsd:complexType name="prerequisitesType">
+           <xsd:simpleContent>
+              <xsd:extension base="prerequisiteStringType">
+                  <xsd:attributeGroup ref="attr.prerequisitetype"/>
+              </xsd:extension>
+           </xsd:simpleContent>
+        </xsd:complexType>
+
+        <xsd:attributeGroup name="attr.prerequisitetype">
+                <xsd:attribute name="type" use="required">
+                        <xsd:simpleType>
+                                <xsd:restriction base="xsd:string">
+                                   <xsd:enumeration value="aicc_script"/>
+                                </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
+        </xsd:attributeGroup>
+
+        <xsd:simpleType name="maxtimeallowedType">
+                <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="13"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+        <xsd:simpleType name="timelimitactionType">
+                <xsd:restriction base="stringType">
+                        <xsd:enumeration value="exit,no message"/>
+                        <xsd:enumeration value="exit,message"/>
+                        <xsd:enumeration value="continue,no message"/>
+                        <xsd:enumeration value="continue,message"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+        <xsd:simpleType name="datafromlmsType">
+                <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="255"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+        <xsd:simpleType name="masteryscoreType">
+                <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="200"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+        <xsd:simpleType name="stringType">
+                <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+        
+        <xsd:simpleType name="prerequisiteStringType">
+                <xsd:restriction base="xsd:string">
+                   <xsd:maxLength value="200"/>
+                </xsd:restriction>
+        </xsd:simpleType>
+
+</xsd:schema>
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta  name="referrer" content="origin" />
+    <script>
+      /* jshint ignore:start */
+      // jscs:disable
+      // https://gist.github.com/982883
+      var uuid = function(a) {
+        return a           // if the placeholder was passed, return
+          ? (              // a random number from 0 to 15
+            a ^            // unless b is 8,
+            Math.random()  // in which case
+            * 16           // a random number from
+            >> a/4         // 8 to 11
+            ).toString(16) // in hexadecimal
+          : (              // or otherwise a concatenated string:
+            [1e7] +        // 10000000 +
+            -1e3 +         // -1000 +
+            -4e3 +         // -4000 +
+            -8e3 +         // -80000000 +
+            -1e11          // -100000000000,
+            ).replace(     // replacing
+              /[018]/g,    // zeroes, ones, and eights with
+              uuid         // random hex digits
+            );
+      };
+
+      window.frameHash = window.location.hash.replace(/^#/, '');
+
+      var postToParent = function(message) {
+        if (window.parent.postMessage != null) {
+          window.parent.postMessage(message, '*');
+        }
+      };
+
+      var onDidReceiveMessage = function(e) {
+        if (e.data.id === frameHash) {
+          var xhr = new XMLHttpRequest(),
+              now = new Date(),
+              data = {
+                messageId: uuid(),
+                sentAt: now.toISOString(),
+                batch: [ {
+                  event: e.data.event,
+                  properties: e.data.properties,
+                  type: 'track',
+                  messageId: uuid(),
+                  timestamp: now.toISOString(),
+                  context: {
+                    ip: '0.0.0.0',
+                    page: {
+                      path: '/',
+                      referrer: '',
+                      search: '',
+                      title: '',
+                      url: 'http://'
+                    }
+                  },
+                  integrations: {},
+                  userId: e.data.aid
+                } ]
+              };
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+              postToParent({
+                id: frameHash,
+                message: 'xhr sent'
+              });
+              window.onDidReceiveMessage = null;
+            }
+          };
+
+          xhr.open('POST', 'https://metrics.articulate.com/v1/import');
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify(data));
+        }
+      };
+
+      if ('onmessage' in window) {
+        window.addEventListener('message', onDidReceiveMessage, false);
+      } else {
+        // coming from flash, we will use older JS since we can expect some older IE versions
+        var validProps = [
+          'os', 'browser', 'playerVersion', 'playerType', 'lmsPresent', 'tinCanPresent',
+          'aoSupport', 'publishSource', 'protocol', 'productChannel', 'cid'
+        ];
+        var aid,
+            props = window.location.search.replace(/^\?/, '').split('&'),
+            config = {};
+
+        for (var i = 0, ii = props.length, currProp; i < ii; i++) {
+          currProp = props[i].split('=');
+          if (validProps.indexOf(currProp[0]) > -1 && currProp.length === 2) {
+            config[currProp[0]] = currProp[1];
+          } else if (currProp[0] === 'aid') {
+            aid = currProp[1];
+          }
+        }
+
+        window.onDidReceiveMessage({
+          data: {
+            id: frameHash,
+            event: 'player_course_load',
+            properties: config,
+            aid: aid
+          }
+        })
+
+      }
+      /* jshint ignore:end */
+      // jscs:enable
+    </script>
+  </head>
+  <body>
+  </body>
+  <script>
+    postToParent({
+      id: window.frameHash,
+      message: 'loaded'
+    });
+  </script>
+</html>
+
+<?xml version="1.0" encoding="UTF-8"?><!-- filename=ims_xml.xsd --><xsd:schema xmlns="http://www.w3.org/XML/1998/namespace"             targetNamespace="http://www.w3.org/XML/1998/namespace"             xmlns:xsd="http://www.w3.org/2001/XMLSchema"             elementFormDefault="qualified">	<!-- 2001-02-22 edited by Thomas Wason IMS Global Learning Consortium, Inc. -->	<xsd:annotation>		<xsd:documentation>In namespace-aware XML processors, the &quot;xml&quot; prefix is bound to the namespace name http://www.w3.org/XML/1998/namespace.</xsd:documentation>		<xsd:documentation>Do not reference this file in XML instances</xsd:documentation>                <xsd:documentation>Schawn Thropp: Changed the uriReference type to string type</xsd:documentation>	</xsd:annotation>	<xsd:attribute name="lang" type="xsd:language">		<xsd:annotation>			<xsd:documentation>Refers to universal  XML 1.0 lang attribute</xsd:documentation>		</xsd:annotation>	</xsd:attribute>	<xsd:attribute name="base" type="xsd:string">		<xsd:annotation>			<xsd:documentation>Refers to XML Base: http://www.w3.org/TR/xmlbase</xsd:documentation>		</xsd:annotation>	</xsd:attribute>	<xsd:attribute name="link" type="xsd:string"/></xsd:schema>
+<?xml version="1.0"?>
+
+<!-- edited with XML Spy v3.5 (http://www.xmlspy.com) by Thomas Wason (private) -->
+<!-- filename=ims_cp_rootv1p1p2.xsd -->
+<!-- Copyright (2) 2001 IMS Global Learning Consortium, Inc. -->
+<!-- edited by Thomas Wason  -->
+<!-- Conforms to w3c http://www.w3.org/TR/xmlschema-1/ 2000-10-24-->
+
+<xsd:schema xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" 
+            targetNamespace="http://www.imsproject.org/xsd/imscp_rootv1p1p2" 
+            xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            elementFormDefault="unqualified" version="IMS CP 1.1.2">
+
+   <!-- ******************** -->
+   <!-- ** Change History ** -->
+   <!-- ******************** -->
+   <xsd:annotation>
+      <xsd:documentation xml:lang="en">DRAFT XSD for IMS Content Packaging version 1.1 DRAFT</xsd:documentation>
+      <xsd:documentation> Copyright (c) 2001 IMS GLC, Inc. </xsd:documentation>
+      <xsd:documentation>2000-04-21, Adjustments by T.D. Wason from CP 1.0.</xsd:documentation>
+      <xsd:documentation>2001-02-22, T.D.Wason: Modify for 2000-10-24 XML-Schema version.  Modified to support extension.</xsd:documentation>
+      <xsd:documentation>2001-03-12, T.D.Wason: Change filename, target and meta-data namespaces and meta-data fielname.  Add meta-data to itemType, fileType and organizationType.</xsd:documentation>
+      <xsd:documentation>Do not define namespaces for xml in XML instances generated from this xsd.</xsd:documentation>
+      <xsd:documentation>Imports IMS meta-data xsd, lower case element names.         </xsd:documentation>
+      <xsd:documentation>This XSD provides a reference to the IMS meta-data root element as imsmd:record</xsd:documentation>
+      <xsd:documentation>If the IMS meta-data is to be used in the XML instance then the instance must define an IMS meta-data prefix with a namespace.  The meta-data targetNamespace should be used.  </xsd:documentation>
+      <xsd:documentation>2001-03-20, Thor Anderson: Remove manifestref, change resourceref back to identifierref, change manifest back to contained by manifest. --Tom Wason: manifest may contain _none_ or more manifests.</xsd:documentation>
+      <xsd:documentation>2001-04-13 Tom Wason: corrected attirbute name structure.  Was misnamed type.  </xsd:documentation>
+      <xsd:documentation>2001-05-14 Schawn Thropp: Made all complexType extensible with the group.any</xsd:documentation>
+      <xsd:documentation>Added the anyAttribute to all complexTypes. Changed the href attribute on the fileType and resourceType to xsd:string</xsd:documentation>
+      <xsd:documentation>Changed the maxLength of the href, identifierref, parameters, structure attributes to match the Information model.</xsd:documentation>
+      <xsd:documentation>2001-07-25 Schawn Thropp: Changed the namespace for the Schema of Schemas to the 5/2/2001 W3C XML Schema</xsd:documentation> 
+      <xsd:documentation>Recommendation. attributeGroup attr.imsmd deleted, was not used anywhere.  Any attribute declarations that have</xsd:documentation>
+      <xsd:documentation>use = "default" changed to use="optional" - attr.structure.req.</xsd:documentation>
+      <xsd:documentation>Any attribute declarations that have value="somevalue" changed to default="somevalue",</xsd:documentation>
+      <xsd:documentation>attr.structure.req (hierarchical).  Removed references to IMS MD Version 1.1.</xsd:documentation>
+      <xsd:documentation>Modified attribute group "attr.resourcetype.req" to change use from optional</xsd:documentation>
+      <xsd:documentation>to required to match the information model.  As a result the default value also needed to be removed</xsd:documentation> 
+      <xsd:documentation>Name change for XSD.  Changed to match version of CP Spec                                           </xsd:documentation> 
+   </xsd:annotation>
+
+   <xsd:annotation>
+      <xsd:documentation>Inclusions and Imports</xsd:documentation>
+   </xsd:annotation>
+
+   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ims_xml.xsd"/>
+
+   <xsd:annotation>
+      <xsd:documentation>Attribute Declarations</xsd:documentation>
+   </xsd:annotation>
+
+   <!-- **************************** -->
+   <!-- ** Attribute Declarations ** -->
+   <!-- **************************** -->
+   <xsd:attributeGroup name="attr.base">
+      <xsd:attribute ref="xml:base" use="optional"/>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.default">
+      <xsd:attribute name="default" type="xsd:IDREF" use="optional"/>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.href">
+      <xsd:attribute name="href" use="optional">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:anyURI">
+               <xsd:maxLength value="2000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.href.req">
+      <xsd:attribute name="href" use="required">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:anyURI">
+               <xsd:maxLength value="2000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup> 
+
+   <xsd:attributeGroup name="attr.identifier.req">
+      <xsd:attribute name="identifier" type="xsd:ID" use="required"/>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.identifier">
+      <xsd:attribute name="identifier" type="xsd:ID" use="optional"/>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.isvisible">
+      <xsd:attribute name="isvisible" type="xsd:boolean" use="optional"/>
+   </xsd:attributeGroup>
+   
+   <xsd:attributeGroup name="attr.parameters">
+      <xsd:attribute name="parameters" use="optional">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="1000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+   
+   <xsd:attributeGroup name="attr.identifierref">
+      <xsd:attribute name="identifierref" use="optional">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="2000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+   
+   <xsd:attributeGroup name="attr.identifierref.req">
+      <xsd:attribute name="identifierref" use="required">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="2000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+                
+   <xsd:attributeGroup name="attr.resourcetype.req">
+      <xsd:attribute name="type" use="required">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="1000"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.structure.req">
+      <xsd:attribute name="structure" use="optional" default="hierarchical">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="200"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+
+   <xsd:attributeGroup name="attr.version">
+      <xsd:attribute name="version" use="optional">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:maxLength value="20"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+
+   <xsd:annotation>
+       <xsd:documentation>element groups</xsd:documentation>
+   </xsd:annotation>
+
+   <xsd:group name="grp.any">
+      <xsd:annotation>
+         <xsd:documentation>Any namespaced element from any namespace may be included within an &quot;any&quot; element.  The namespace for the imported element must be defined in the instance, and the schema must be imported.  </xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:group>
+
+   <!-- ************************** -->
+   <!-- ** Element Declarations ** -->
+   <!-- ************************** -->
+
+   <xsd:element name="dependency" type="dependencyType"/>
+   <xsd:element name="file" type="fileType"/>
+   <xsd:element name="item" type="itemType"/>
+   <xsd:element name="manifest" type="manifestType"/>
+   <xsd:element name="metadata" type="metadataType"/>
+   <xsd:element name="organization" type="organizationType"/>
+   <xsd:element name="organizations" type="organizationsType"/>
+   <xsd:element name="resource" type="resourceType"/>
+   <xsd:element name="resources" type="resourcesType"/>
+   <xsd:element name="schema" type="schemaType"/>
+   <xsd:element name="schemaversion" type="schemaversionType"/>
+   <xsd:element name="title" type="titleType"/>
+
+   <!-- ******************* -->
+   <!-- ** Complex Types ** -->
+   <!-- ******************* -->
+
+   <!-- **************** -->
+   <!-- ** dependency ** -->
+   <!-- **************** -->
+   <xsd:complexType name="dependencyType">
+      <xsd:sequence>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.identifierref.req"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ********** -->
+   <!-- ** file ** -->
+   <!-- ********** -->
+   <xsd:complexType name="fileType">
+      <xsd:sequence>
+         <xsd:element ref="metadata" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.href.req"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ********** -->
+   <!-- ** item ** -->
+   <!-- ********** -->
+   <xsd:complexType name="itemType">
+      <xsd:sequence>
+         <xsd:element ref="title" minOccurs="0"/>
+         <xsd:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="metadata" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.identifier.req"/>
+      <xsd:attributeGroup ref="attr.identifierref"/>
+      <xsd:attributeGroup ref="attr.isvisible"/>
+      <xsd:attributeGroup ref="attr.parameters"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ************** -->
+   <!-- ** manifest ** -->
+   <!-- ************** -->
+   <xsd:complexType name="manifestType">
+      <xsd:sequence>
+         <xsd:element ref="metadata" minOccurs="0"/>
+         <xsd:element ref="organizations"/>
+         <xsd:element ref="resources"/>
+         <xsd:element ref="manifest" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.identifier.req"/>
+      <xsd:attributeGroup ref="attr.version"/>
+      <xsd:attribute ref="xml:base"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ************** -->
+   <!-- ** metadata ** -->
+   <!-- ************** -->
+   <xsd:complexType name="metadataType">
+      <xsd:sequence>
+         <xsd:element ref="schema" minOccurs="0"/>
+         <xsd:element ref="schemaversion" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <!-- ******************* -->
+   <!-- ** organizations ** -->
+   <!-- ******************* -->
+   <xsd:complexType name="organizationsType">
+      <xsd:sequence>
+         <xsd:element ref="organization" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.default"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ****************** -->
+   <!-- ** organization ** -->
+   <!-- ****************** -->
+   <xsd:complexType name="organizationType">
+      <xsd:sequence>
+         <xsd:element ref="title" minOccurs="0"/>
+         <xsd:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="metadata" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.identifier.req"/>
+      <xsd:attributeGroup ref="attr.structure.req"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- *************** -->
+   <!-- ** resources ** -->
+   <!-- *************** -->
+   <xsd:complexType name="resourcesType">
+      <xsd:sequence>
+          <xsd:element ref="resource" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.base"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+   
+   <!-- ************** -->
+   <!-- ** resource ** -->
+   <!-- ************** -->
+   <xsd:complexType name="resourceType">
+      <xsd:sequence>
+         <xsd:element ref="metadata" minOccurs="0"/>
+         <xsd:element ref="file" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="dependency" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="attr.identifier.req"/>
+      <xsd:attributeGroup ref="attr.resourcetype.req"/>
+      <xsd:attributeGroup ref="attr.base"/>
+      <xsd:attributeGroup ref="attr.href"/>
+      <xsd:anyAttribute namespace="##other" processContents="strict"/>
+   </xsd:complexType>
+
+   <!-- ****************** -->
+   <!-- ** Simple Types ** -->
+   <!-- ****************** -->
+
+   <!-- ************ -->
+   <!-- ** schema ** -->
+   <!-- ************ -->
+   <xsd:simpleType name="schemaType">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="100"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <!-- ******************* -->
+   <!-- ** schemaversion ** -->
+   <!-- ******************* -->
+   <xsd:simpleType name="schemaversionType">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="20"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <!-- *********** -->
+   <!-- ** title ** -->
+   <!-- *********** -->
+   <xsd:simpleType name="titleType">
+      <xsd:restriction base="xsd:string">
+         <xsd:maxLength value="200"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+</xsd:schema>
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest identifier="_639lFxoSmHh_course_id" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+    <lom xmlns="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd">
+      <general>
+        <title>
+          <langstring xml:lang="x-none">Especificación de requerimientos I</langstring>
+        </title>
+      </general>
+      <lifecycle>
+        <version>
+          <langstring xml:lang="x-none">1</langstring>
+        </version>
+        <status>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">Final</langstring>
+          </value>
+        </status>
+      </lifecycle>
+      <metametadata>
+        <metadatascheme>ADL SCORM 1.2</metadatascheme>
+      </metametadata>
+      <educational>
+        <typicallearningtime>
+          <datetime>PT0H0M0S</datetime>
+        </typicallearningtime>
+      </educational>
+      <rights>
+        <cost>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">yes</langstring>
+          </value>
+        </cost>
+        <copyrightandotherrestrictions>
+          <source>
+            <langstring xml:lang="x-none">LOMv1.0</langstring>
+          </source>
+          <value>
+            <langstring xml:lang="x-none">yes</langstring>
+          </value>
+        </copyrightandotherrestrictions>
+      </rights>
+    </lom>
+  </metadata>
+  <organizations default="Especificación_de_requerimientos_I_ORG">
+    <organization identifier="Especificación_de_requerimientos_I_ORG">
+      <title>Especificación de requerimientos I</title>
+      <item identifier="De_la_experiencia_del_candidato_con_los_procesos_asociados_a_la_captación_y_sele_SCO" isvisible="true" identifierref="__639lFxoSmHh_course_id_RES">
+        <title>Especificación de requerimientos I</title>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="__639lFxoSmHh_course_id_RES" type="webcontent" href="index_lms.html" adlcp:scormtype="sco">
+      <file href="story_content/thumbnail.jpg" />
+      <file href="story_content/5f9AimIFqyN_80_P_153_0_1096_700_DX2800_DY2800.swf" />
+      <file href="mobile/5f9AimIFqyN_80_P_153_0_1096_700_DX2800_DY2800_CX1097_CY700.png" />
+      <file href="story_content/5YLsocL4RyI_80_DX182_DY182.swf" />
+      <file href="mobile/5YLsocL4RyI_80_DX182_DY182_CX132_CY49.png" />
+      <file href="story_content/64k3p4wRbOF_80_DX1110_DY1110.swf" />
+      <file href="mobile/64k3p4wRbOF_80_DX1110_DY1110_CX830_CY126.png" />
+      <file href="story_content/5v0A1p4Uo9X_80_DX1170_DY1170.swf" />
+      <file href="mobile/5v0A1p4Uo9X_80_DX1170_DY1170_CX877_CY812.png" />
+      <file href="story_content/6b08xZTFDv1_80_DX428_DY428.swf" />
+      <file href="mobile/6b08xZTFDv1_80_DX428_DY428_CX317_CY48.png" />
+      <file href="story_content/5hSXQS1XGgX_80_P_0_0_1100_700_DX2800_DY2800.swf" />
+      <file href="mobile/5hSXQS1XGgX_80_P_0_0_1100_700_DX2800_DY2800_CX1101_CY700.png" />
+      <file href="story_content/6MjSuWSVIf2_80_DX82_DY82.swf" />
+      <file href="mobile/6MjSuWSVIf2_80_DX82_DY82_CX61_CY60.png" />
+      <file href="story_content/62hwsOVV8gi_X_80_R9BF2FF_DX72_DY72.swf" />
+      <file href="mobile/62hwsOVV8gi_X_80_R9BF2FF_DX72_DY72_CX54_CY54.png" />
+      <file href="story_content/5ZZCtwtslhA_80_DX80_DY80.swf" />
+      <file href="mobile/5ZZCtwtslhA_80_DX80_DY80_CX60_CY60.png" />
+      <file href="story_content/6PpBXdeUBtD_80_DX80_DY80.swf" />
+      <file href="mobile/6PpBXdeUBtD_80_DX80_DY80_CX60_CY60.png" />
+      <file href="story_content/_glow.swf" />
+      <file href="story_content/6cgZPwK47Ar_80_DX1400_DY1400.jpg" />
+      <file href="mobile/6cgZPwK47Ar_80_DX1400_DY1400_CX699_CY1049.jpg" />
+      <file href="story_content/6mUogpAIMPz_80_DX80_DY80.swf" />
+      <file href="mobile/6mUogpAIMPz_80_DX80_DY80_CX60_CY60.png" />
+      <file href="story_content/68XNZ7XFWIn_80_DX260_DY260.swf" />
+      <file href="mobile/68XNZ7XFWIn_80_DX260_DY260_CX195_CY195.png" />
+      <file href="story_content/6V8pFu4ksmS_80_DX204_DY204.swf" />
+      <file href="mobile/6V8pFu4ksmS_80_DX204_DY204_CX153_CY153.png" />
+      <file href="story_content/6PGPTlee26v_80_P_0_398_1365_1510_DX1902_DY1902.swf" />
+      <file href="mobile/6PGPTlee26v_80_P_0_398_1365_1510_DX1902_DY1902_CX679_CY751.png" />
+      <file href="story_content/6Olpw7RSIU2_80_DX82_DY82.swf" />
+      <file href="mobile/6Olpw7RSIU2_80_DX82_DY82_CX54_CY57.png" />
+      <file href="story_content/6jQCyhFQ4iI_80_P_0_0_1888_1225_DX2330_DY2330.swf" />
+      <file href="mobile/6jQCyhFQ4iI_80_P_0_0_1888_1225_DX2330_DY2330_CX1650_CY1071.png" />
+      <file href="story_content/6mCyqDb9If2_80_P_62_0_1113_1364_DX2100_DY2100.swf" />
+      <file href="mobile/6mCyqDb9If2_80_P_62_0_1113_1364_DX2100_DY2100_CX856_CY1049.png" />
+      <file href="story_content/6AFfAPaKW29_80_P_117_0_1930_1364_DX1044_DY1044.swf" />
+      <file href="mobile/6AFfAPaKW29_80_P_117_0_1930_1364_DX1044_DY1044_CX738_CY522.png" />
+      <file href="story_content/5r1ZHul7DS9_80_P_226_0_577_1364_DX2100_DY2100.swf" />
+      <file href="mobile/5r1ZHul7DS9_80_P_226_0_577_1364_DX2100_DY2100_CX444_CY1050.png" />
+      <file href="story_content/6OYFBBOYS4Y_80_DX364_DY364.swf" />
+      <file href="mobile/6OYFBBOYS4Y_80_DX364_DY364_CX150_CY150.png" />
+      <file href="story_content/5kRBK68LTC9_80_DX332_DY332.swf" />
+      <file href="mobile/5kRBK68LTC9_80_DX332_DY332_CX132_CY132.png" />
+      <file href="mobile/6OYFBBOYS4Y_80_DX364_DY364_CX273_CY273.png" />
+      <file href="mobile/6Olpw7RSIU2_80_DX82_DY82_CX49_CY52.png" />
+      <file href="mobile/5kRBK68LTC9_80_DX332_DY332_CX249_CY249.png" />
+      <file href="story_content/6FOmdyVMdHZ_80_P_376_0_1302_1364_DX2100_DY2100.swf" />
+      <file href="mobile/6FOmdyVMdHZ_80_P_376_0_1302_1364_DX2100_DY2100_CX1002_CY1050.png" />
+      <file href="story_content/6i7vVZDorkz_80_P_302_0_1127_1364_DX2100_DY2100.swf" />
+      <file href="mobile/6i7vVZDorkz_80_P_302_0_1127_1364_DX2100_DY2100_CX867_CY1050.png" />
+      <file href="story_content/5o8PvZtDURo_80_DX1488_DY1488.swf" />
+      <file href="mobile/5o8PvZtDURo_80_DX1488_DY1488_CX1115_CY561.png" />
+      <file href="story_content/txt__default_6f61TfqdRNb.swf" />
+      <file href="story_content/Shape5jSyisERhGX.swf" />
+      <file href="story_content/6avu1Y9O1y0_80_DX184_DY184.swf" />
+      <file href="mobile/6avu1Y9O1y0_80_DX184_DY184_CX138_CY138.png" />
+      <file href="story_content/Shape6SJ7GtiYFkM.swf" />
+      <file href="story_content/zoomIcon.png" />
+      <file href="story_content/6cMJJqZyQng_80_DX1164_DY763_CX1164_CY763.swf" />
+      <file href="mobile/6cMJJqZyQng_80_DX1164_DY763_CX1164_CY763.png" />
+      <file href="story_content/Shape6UJ34R7quWV.swf" />
+      <file href="story_content/5lpYqLutRml_80_DX970_DY630_CX970_CY630.swf" />
+      <file href="mobile/5lpYqLutRml_80_DX970_DY630_CX970_CY630.png" />
+      <file href="story_content/6hFOMNKGO1w_80_DX1464_DY1464.swf" />
+      <file href="mobile/6hFOMNKGO1w_80_DX1464_DY1464_CX1098_CY768.png" />
+      <file href="story_content/6qacPiTMhRa_80_RB_DX232_DY232.swf" />
+      <file href="mobile/6qacPiTMhRa_80_RB_DX232_DY232_CX174_CY174.png" />
+      <file href="story_content/68XNZ7XFWIn_80_RB_DX260_DY260.swf" />
+      <file href="mobile/68XNZ7XFWIn_80_RB_DX260_DY260_CX162_CY162.png" />
+      <file href="story_content/6V8pFu4ksmS_80_RB_DX204_DY204.swf" />
+      <file href="mobile/6V8pFu4ksmS_80_RB_DX204_DY204_CX132_CY132.png" />
+      <file href="story_content/5w0Owq3eBV9_80_P_226_0_1126_700_DX2800_DY2800.swf" />
+      <file href="mobile/5w0Owq3eBV9_80_P_226_0_1126_700_DX2800_DY2800_CX1126_CY700.png" />
+      <file href="story_content/6B233v6KXuj_Y_80_DX1950_DY1950.swf" />
+      <file href="mobile/6B233v6KXuj_Y_80_DX1950_DY1950_CX1162_CY633.png" />
+      <file href="story_content/5WfYpsn9qBj_80_DX794_DY794.swf" />
+      <file href="mobile/5WfYpsn9qBj_80_DX794_DY794_CX595_CY120.png" />
+      <file href="story_content/6mddj8aeZ83_80_DX2800_DY2800.swf" />
+      <file href="mobile/6mddj8aeZ83_80_DX2800_DY2800_CX1400_CY700.png" />
+      <file href="story_content/5sRfIcnuEn0_80_P_0_0_2053_1303_DX2212_DY2212.swf" />
+      <file href="mobile/5sRfIcnuEn0_80_P_0_0_2053_1303_DX2212_DY2212_CX1658_CY1053.png" />
+      <file href="story_content/5hSXQS1XGgX_80_P_35_0_1093_700_DX2800_DY2800.swf" />
+      <file href="mobile/5hSXQS1XGgX_80_P_35_0_1093_700_DX2800_DY2800_CX1094_CY700.png" />
+      <file href="meta.xml" />
+      <file href="story_content/FontFactory.swf" />
+      <file href="story_content/fonts.swf" />
+      <file href="story_content/frame.xml" />
+      <file href="story_content/user.js" />
+      <file href="mobile/txt__default_6f61TfqdRNb.png" />
+      <file href="mobile/Shape5jSyisERhGX.png" />
+      <file href="mobile/Shape6SJ7GtiYFkM.png" />
+      <file href="mobile/Shape6UJ34R7quWV.png" />
+      <file href="story.swf" />
+      <file href="story_content/frame.swf" />
+      <file href="story_content/slides/5upy5EqP8XI.swf" />
+      <file href="story_content/slides/5kVkuqh55WE.swf" />
+      <file href="story_content/slides/5eHRv5l4p2X.swf" />
+      <file href="story_content/slides/5rrGn0SDmu7.swf" />
+      <file href="story_content/slides/62cRclscidy.swf" />
+      <file href="story_content/slides/6GY11rmpBi2.swf" />
+      <file href="story_content/slides/5Y6Vk2TeJIG.swf" />
+      <file href="story_content/slides/5o200X03PqC.swf" />
+      <file href="story_content/slides/6dPbQ0wDMXW.swf" />
+      <file href="story_content/slides/64Syfl39JPc.swf" />
+      <file href="story_content/slides/628KE1Y29Tl.swf" />
+      <file href="story_content/slides/5l7omTqWS6Q.swf" />
+      <file href="story_content/slides/6i5uNIk28BA.swf" />
+      <file href="story_content/slides/6fUes2anCQr.swf" />
+      <file href="story_content/slides/5zF0UAIwKC5.swf" />
+      <file href="story_content/slides/6eQb8IytPPh.swf" />
+      <file href="story_content/slides/5zEQoSj8kGP.swf" />
+      <file href="story_content/slides/61p3pfT8f6G.swf" />
+      <file href="story_content/slides/6mt98tyqMYG.swf" />
+      <file href="story_content/slides/6kGbwVvwFH7.swf" />
+      <file href="story_content/slides/6SCVOKekeUz.swf" />
+      <file href="story_content/slides/5XQ3wEQokxZ.swf" />
+      <file href="story_content/slides/6NNjtFOGuAB.swf" />
+      <file href="story_content/slides/5yBn1Nc5pt1.swf" />
+      <file href="story_content/slides/6dbqrvcazNA.swf" />
+      <file href="story_content/slides/62XknE7qPxw.swf" />
+      <file href="story_content/slides/5fZsxnLcHNd.swf" />
+      <file href="story_content/slides/620CgYv3tVF.swf" />
+      <file href="story_content/data.swf" />
+      <file href="html5/data/css/output.min.css" />
+      <file href="html5/data/js/5eHRv5l4p2X.js" />
+      <file href="html5/data/js/5fZsxnLcHNd.js" />
+      <file href="html5/data/js/5kVkuqh55WE.js" />
+      <file href="html5/data/js/5l7omTqWS6Q.js" />
+      <file href="html5/data/js/5o200X03PqC.js" />
+      <file href="html5/data/js/5rrGn0SDmu7.js" />
+      <file href="html5/data/js/5upy5EqP8XI.js" />
+      <file href="html5/data/js/5XQ3wEQokxZ.js" />
+      <file href="html5/data/js/5Y6Vk2TeJIG.js" />
+      <file href="html5/data/js/5yBn1Nc5pt1.js" />
+      <file href="html5/data/js/5zEQoSj8kGP.js" />
+      <file href="html5/data/js/5zF0UAIwKC5.js" />
+      <file href="html5/data/js/61p3pfT8f6G.js" />
+      <file href="html5/data/js/620CgYv3tVF.js" />
+      <file href="html5/data/js/628KE1Y29Tl.js" />
+      <file href="html5/data/js/62cRclscidy.js" />
+      <file href="html5/data/js/62XknE7qPxw.js" />
+      <file href="html5/data/js/64Syfl39JPc.js" />
+      <file href="html5/data/js/6dbqrvcazNA.js" />
+      <file href="html5/data/js/6dPbQ0wDMXW.js" />
+      <file href="html5/data/js/6eQb8IytPPh.js" />
+      <file href="html5/data/js/6fUes2anCQr.js" />
+      <file href="html5/data/js/6GY11rmpBi2.js" />
+      <file href="html5/data/js/6i5uNIk28BA.js" />
+      <file href="html5/data/js/6kGbwVvwFH7.js" />
+      <file href="html5/data/js/6mt98tyqMYG.js" />
+      <file href="html5/data/js/6NNjtFOGuAB.js" />
+      <file href="html5/data/js/6SCVOKekeUz.js" />
+      <file href="html5/data/js/data.js" />
+      <file href="html5/data/js/frame.js" />
+      <file href="html5/data/js/paths.js" />
+      <file href="html5/lib/scripts/ds-bootstrap.min.js" />
+      <file href="html5/lib/scripts/ds-frame.desktop.min.js" />
+      <file href="html5/lib/scripts/ds-frame.mobile.min.js" />
+      <file href="html5/lib/scripts/ds-slides.min.js" />
+      <file href="html5/lib/stylesheets/desktop.min.css" />
+      <file href="html5/lib/stylesheets/mobile.min.css" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-bold.woff" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-light.woff" />
+      <file href="html5/lib/stylesheets/mobile-fonts/open-sans-regular.woff" />
+      <file href="analytics-frame.html" />
+      <file href="story.html" />
+      <file href="story_html5.html" />
+      <file href="story_flash.html" />
+      <file href="story_content/story.js" />
+      <file href="story_content/blank.html" />
+      <file href="index_lms.html" />
+      <file href="index_lms_flash.html" />
+      <file href="index_lms_html5.html" />
+      <file href="lms/AICCComm.html" />
+      <file href="lms/AICCFunctions.js" />
+      <file href="lms/API.js" />
+      <file href="lms/APIConstants.js" />
+      <file href="lms/blank.html" />
+      <file href="lms/browsersniff.js" />
+      <file href="lms/Configuration.js" />
+      <file href="lms/goodbye.html" />
+      <file href="lms/lms.js" />
+      <file href="lms/LMSAPI.js" />
+      <file href="lms/NONEFunctions.js" />
+      <file href="lms/SCORM2004Functions.js" />
+      <file href="lms/SCORMFunctions.js" />
+      <file href="lms/UtilityFunctions.js" />
+    </resource>
+  </resources>
+</manifest>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited by Thomas Wason  -->
+<xsd:schema targetNamespace="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1" 
+            xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns="http://www.imsglobal.org/xsd/imsmd_rootv1p2p1" 
+            elementFormDefault="qualified" 
+            version="1.2:1.1 IMS:MD1.2">
+
+   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ims_xml.xsd"/> 
+
+   <!-- ******************** -->
+   <!-- ** Change History ** -->
+   <!-- ******************** -->
+   <xsd:annotation>
+      <xsd:documentation>2001-04-26 T.D.Wason. IMS meta-data 1.2 XML-Schema.                                  </xsd:documentation>
+      <xsd:documentation>2001-06-07 S.E.Thropp. Changed the multiplicity on all elements to match the         </xsd:documentation>
+      <xsd:documentation>Final 1.2 Binding Specification.                                                     </xsd:documentation>
+      <xsd:documentation>Changed all elements that use the langstringType to a multiplicy of 1 or more        </xsd:documentation>
+      <xsd:documentation>Changed centity in the contribute element to have a multiplicity of 0 or more.       </xsd:documentation>
+      <xsd:documentation>Changed the requirement element to have a multiplicity of 0 or more.                 </xsd:documentation>
+      <xsd:documentation> 2001-07-25 Schawn Thropp.  Updates to bring the XSD up to speed with the W3C        </xsd:documentation>
+      <xsd:documentation> XML Schema Recommendation.  The following changes were made: Change the             </xsd:documentation>
+      <xsd:documentation> namespace to reference the 5/2/2001 W3C XML Schema Recommendation,the base          </xsd:documentation>
+      <xsd:documentation> type for the durtimeType, simpleType, was changed from timeDuration to duration.    </xsd:documentation>              
+      <xsd:documentation> Any attribute declarations that have use="default" had to change to use="optional"  </xsd:documentation>
+      <xsd:documentation> - attr.type.  Any attribute declarations that have value ="somevalue" had to change </xsd:documentation>
+      <xsd:documentation> to default = "somevalue" - attr.type (URI)                                          </xsd:documentation>
+      <xsd:documentation> 2001-09-04 Schawn Thropp                                                            </xsd:documentation>
+      <xsd:documentation> Changed the targetNamespace and namespace of schema to reflect version change       </xsd:documentation>
+   </xsd:annotation>
+
+   <!-- *************************** -->
+   <!-- ** Attribute Declaration ** -->
+   <!-- *************************** -->
+
+   <xsd:attributeGroup name="attr.type">
+      <xsd:attribute name="type" use="optional" default="URI">
+         <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="URI"/>
+               <xsd:enumeration value="TEXT"/>
+            </xsd:restriction>
+         </xsd:simpleType>
+      </xsd:attribute>
+   </xsd:attributeGroup>
+
+   <xsd:group name="grp.any">
+      <xsd:annotation>
+         <xsd:documentation>Any namespaced element from any namespace may be used for an &quot;any&quot; element.  The namespace for the imported element must be defined in the instance, and the schema must be imported.  </xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:group>
+
+   <!-- ************************* -->
+   <!-- ** Element Declaration ** -->
+   <!-- ************************* -->
+
+   <xsd:element name="aggregationlevel" type="aggregationlevelType"/>
+   <xsd:element name="annotation" type="annotationType"/>
+   <xsd:element name="catalogentry" type="catalogentryType"/>
+   <xsd:element name="catalog" type="catalogType"/>
+   <xsd:element name="centity" type="centityType"/>
+   <xsd:element name="classification" type="classificationType"/>
+   <xsd:element name="context" type="contextType"/>
+   <xsd:element name="contribute" type="contributeType"/>
+   <xsd:element name="copyrightandotherrestrictions" type="copyrightandotherrestrictionsType"/>
+   <xsd:element name="cost" type="costType"/>
+   <xsd:element name="coverage" type="coverageType"/>
+   <xsd:element name="date" type="dateType"/>
+   <xsd:element name="datetime" type="datetimeType"/>
+   <xsd:element name="description" type="descriptionType"/>
+   <xsd:element name="difficulty" type="difficultyType"/>
+   <xsd:element name="educational" type="educationalType"/>
+   <xsd:element name="entry" type="entryType"/>
+   <xsd:element name="format" type="formatType"/>
+   <xsd:element name="general" type="generalType"/>
+   <xsd:element name="identifier" type="xsd:string"/>
+   <xsd:element name="intendedenduserrole" type="intendedenduserroleType"/>
+   <xsd:element name="interactivitylevel" type="interactivitylevelType"/>
+   <xsd:element name="interactivitytype" type="interactivitytypeType"/>
+   <xsd:element name="keyword" type="keywordType"/>
+   <xsd:element name="kind" type="kindType"/>
+   <xsd:element name="langstring" type="langstringType"/>
+   <xsd:element name="language" type="xsd:string"/>
+   <xsd:element name="learningresourcetype" type="learningresourcetypeType"/>
+   <xsd:element name="lifecycle" type="lifecycleType"/>
+   <xsd:element name="location" type="locationType"/>
+   <xsd:element name="lom" type="lomType"/>
+   <xsd:element name="maximumversion" type="minimumversionType"/>
+   <xsd:element name="metadatascheme" type="metadataschemeType"/>
+   <xsd:element name="metametadata" type="metametadataType"/>
+   <xsd:element name="minimumversion" type="maximumversionType"/>
+   <xsd:element name="name" type="nameType"/>
+   <xsd:element name="purpose" type="purposeType"/>
+   <xsd:element name="relation" type="relationType"/>
+   <xsd:element name="requirement" type="requirementType"/>
+   <xsd:element name="resource" type="resourceType"/>
+   <xsd:element name="rights" type="rightsType"/>
+   <xsd:element name="role" type="roleType"/>
+   <xsd:element name="semanticdensity" type="semanticdensityType"/>
+   <xsd:element name="size" type="sizeType"/>
+   <xsd:element name="source" type="sourceType"/>
+   <xsd:element name="status" type="statusType"/>
+   <xsd:element name="structure" type="structureType"/>
+   <xsd:element name="taxon" type="taxonType"/>
+   <xsd:element name="taxonpath" type="taxonpathType"/>
+   <xsd:element name="technical" type="technicalType"/>
+   <xsd:element name="title" type="titleType"/>
+   <xsd:element name="type" type="typeType"/>
+   <xsd:element name="typicalagerange" type="typicalagerangeType"/>
+   <xsd:element name="typicallearningtime" type="typicallearningtimeType"/>
+   <xsd:element name="value" type="valueType"/>
+   <xsd:element name="person" type="personType"/>
+   <xsd:element name="vcard" type="xsd:string"/>
+   <xsd:element name="version" type="versionType"/>
+   <xsd:element name="installationremarks" type="installationremarksType"/>
+   <xsd:element name="otherplatformrequirements" type="otherplatformrequirementsType"/>
+   <xsd:element name="duration" type="durationType"/>
+   <xsd:element name="id" type="idType"/>
+
+   <!-- ******************* -->
+   <!-- ** Complex Types ** -->
+   <!-- ******************* -->
+
+   <xsd:complexType name="aggregationlevelType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="annotationType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="person" minOccurs="0"/>
+         <xsd:element ref="date" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="catalogentryType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="catalog"/>
+         <xsd:element ref="entry"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="centityType">
+      <xsd:sequence>
+         <xsd:element ref="vcard"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="classificationType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="purpose" minOccurs="0"/>
+         <xsd:element ref="taxonpath" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="description" minOccurs="0"/>
+         <xsd:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="contextType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="contributeType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="role"/>
+         <xsd:element ref="centity" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="date" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="copyrightandotherrestrictionsType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="costType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="coverageType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="dateType">
+      <xsd:sequence>
+         <xsd:element ref="datetime" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="descriptionType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="difficultyType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="durationType">
+      <xsd:sequence>
+         <xsd:element ref="datetime" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="educationalType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="interactivitytype" minOccurs="0"/>
+         <xsd:element ref="learningresourcetype" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="interactivitylevel" minOccurs="0"/>
+         <xsd:element ref="semanticdensity" minOccurs="0"/>
+         <xsd:element ref="intendedenduserrole" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="context" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="typicalagerange" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="difficulty" minOccurs="0"/>
+         <xsd:element ref="typicallearningtime" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+         <xsd:element ref="language" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="entryType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="generalType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="identifier" minOccurs="0"/>
+         <xsd:element ref="title" minOccurs="0"/>
+         <xsd:element ref="catalogentry" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="language" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="description" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="coverage" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="structure" minOccurs="0"/>
+         <xsd:element ref="aggregationlevel" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="installationremarksType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="intendedenduserroleType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="interactivitylevelType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="interactivitytypeType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="keywordType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="kindType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="langstringType">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string">
+            <xsd:attribute ref="xml:lang"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   
+   <xsd:complexType name="learningresourcetypeType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="lifecycleType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="version" minOccurs="0"/>
+         <xsd:element ref="status" minOccurs="0"/>
+         <xsd:element ref="contribute" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="locationType">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string">
+            <xsd:attributeGroup ref="attr.type"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   
+   <xsd:complexType name="lomType">
+      <xsd:sequence>
+         <xsd:element ref="general" minOccurs="0"/>
+         <xsd:element ref="lifecycle" minOccurs="0"/>
+         <xsd:element ref="metametadata" minOccurs="0"/>
+         <xsd:element ref="technical" minOccurs="0"/>
+         <xsd:element ref="educational" minOccurs="0"/>
+         <xsd:element ref="rights" minOccurs="0"/>
+         <xsd:element ref="relation" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="annotation" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="classification" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="metametadataType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="identifier" minOccurs="0"/>
+         <xsd:element ref="catalogentry" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="contribute" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="metadatascheme" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="language" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="nameType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="otherplatformrequirementsType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="personType">
+      <xsd:sequence>
+         <xsd:element ref="vcard"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="purposeType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="relationType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="kind" minOccurs="0"/>
+         <xsd:element ref="resource" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="requirementType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="type" minOccurs="0"/>
+         <xsd:element ref="name" minOccurs="0"/>
+         <xsd:element ref="minimumversion" minOccurs="0"/>
+         <xsd:element ref="maximumversion" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="resourceType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="identifier" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+         <xsd:element ref="catalogentry" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="rightsType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="cost" minOccurs="0"/>
+         <xsd:element ref="copyrightandotherrestrictions" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="roleType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="semanticdensityType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="sourceType">
+      <xsd:sequence>
+         <xsd:element ref="langstring"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="statusType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="stringType">
+      <xsd:simpleContent>
+         <xsd:extension base="xsd:string">
+            <xsd:attribute ref="xml:lang"/>
+         </xsd:extension>
+      </xsd:simpleContent>
+   </xsd:complexType>
+   
+   <xsd:complexType name="structureType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="taxonpathType">
+      <xsd:sequence>
+         <xsd:element ref="source" minOccurs="0"/>
+         <xsd:element ref="taxon" minOccurs="0" maxOccurs="1"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="taxonType">
+      <xsd:sequence>
+         <xsd:element ref="id" minOccurs="0"/>
+         <xsd:element ref="entry" minOccurs="0"/>
+         <xsd:element ref="taxon" minOccurs="0" maxOccurs="1"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="technicalType" mixed="true">
+      <xsd:sequence>
+         <xsd:element ref="format" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="size" minOccurs="0"/>
+         <xsd:element ref="location" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="requirement" minOccurs="0" maxOccurs="unbounded"/>
+         <xsd:element ref="installationremarks" minOccurs="0"/>
+         <xsd:element ref="otherplatformrequirements" minOccurs="0"/>
+         <xsd:element ref="duration" minOccurs="0"/>
+         <xsd:group ref="grp.any"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="titleType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typeType">
+      <xsd:sequence>
+         <xsd:element ref="source"/>
+         <xsd:element ref="value"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typicalagerangeType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="typicallearningtimeType">
+      <xsd:sequence>
+         <xsd:element ref="datetime" minOccurs="0"/>
+         <xsd:element ref="description" minOccurs="0"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="valueType">
+      <xsd:sequence>
+         <xsd:element ref="langstring"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <xsd:complexType name="versionType">
+      <xsd:sequence>
+         <xsd:element ref="langstring" minOccurs="1" maxOccurs="unbounded"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   
+   <!-- ****************** -->
+   <!-- ** Simple Types ** -->
+   <!-- ****************** -->
+   
+   <xsd:simpleType name="formatType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="sizeType">
+      <xsd:restriction base="xsd:int"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="datetimeType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="idType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="metadataschemeType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="catalogType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="minimumversionType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="maximumversionType">
+      <xsd:restriction base="xsd:string"/>
+   </xsd:simpleType>
+
+</xsd:schema>
+
+<html>
+<head>
+    <title>Especificaci&#243;n de requerimientos I</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <style>
+        body {
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        html, body, table {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        #nosupport {
+            background: #f5f5f5;
+            margin: 50px 65px;
+            border: 1px solid #d5d5d5;
+            width: calc(100% - 130px);
+            height: calc(100% - 100px);
+        }
+
+        p {
+            font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
+            font-size: 12pt;
+            color: #303030;
+        }
+
+        a {
+            color: #2D9DDA;
+            text-decoration: none !important;
+        }
+
+    </style>
+    <script>
+        var html5Supported = true,
+                showWarning = false;
+
+        function displayWarning() {
+            if (showWarning) {
+                document.getElementById('nosupport').style.visibility = 'visible';
+            }
+        }
+
+    </script>
+    <!--[if lte IE 9]><script>html5Supported = false;</script><![endif]-->
+
+    <script type="text/javascript">
+        (function () {
+            var settings = {
+                runtimeOrder: [{"type":"html5","url":"index_lms_html5.html"},{"type":"flash","url":"index_lms_flash.html"}]
+            };
+
+            var detection = {
+                agent: navigator.userAgent,
+
+                flashEnabled: function () {
+                    var description, version, flashAX,
+                            plugin = navigator.plugins["Shockwave Flash"];
+
+                    if (plugin != null) {
+                        description = plugin.description.split(" ");
+                        version = Number(description[description.length - 2]);
+
+                        return (version >= 10) || isNaN(version);
+                    } else {
+                        try {
+                            flashAX = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.10");
+                            return (flashAX != null);
+                        } catch (e) {
+                        }
+                    }
+
+                    return false;
+                },
+
+                html5Enabled: function () {
+                    return html5Supported;
+                },
+
+                ampEnabled: function () {
+                    return false;
+                },
+
+                isIOS: function () {
+                    return (this.agent.indexOf("AppleWebKit/") > -1 && this.agent.indexOf("Mobile/") > -1)
+                },
+
+                isAndroid: function () {
+                    return (this.agent.indexOf("Android") > -1);
+                },
+
+                isIPad: function () {
+                    return (this.agent.indexOf("iPad") > -1);
+                }
+            };
+
+            var router = {
+
+                init: function () {
+                    var i,
+                            redirected = false,
+                            order = settings.runtimeOrder,
+                            launchMap = {
+                                flash: {
+                                    isEnabled: 'flashEnabled',
+                                    delim: '?'
+                                },
+                                html5: {
+                                    isEnabled: 'html5Enabled',
+                                    delim: '?'
+                                },
+                                amp: {
+                                    isEnabled: 'ampEnabled',
+                                    delim: '#'
+                                }
+                            };
+
+                    for (i = 0; i < order.length; i++) {
+                        var launchInfo = launchMap[order[i].type],
+                                url = order[i].url;
+
+                        if (detection[launchInfo.isEnabled]()) {
+                            this.redirect(url, launchInfo.delim);
+                            redirected = true;
+                            break;
+                        }
+                    }
+
+                    if (!redirected) {
+                        showWarning = true;
+                    }
+                },
+
+                getQueryString: function (params) {
+                    params = params || [];
+                    var i,
+                            queryString = document.location.search.substr(1),
+                            paramArr = queryString.length > 0 ? queryString.split('&') : [];
+
+                    for (i = 0; i < params.length; i++) {
+                        paramArr.push([params[i].name, params[i].value].join('='));
+                    }
+
+                    return paramArr.join('&');
+                },
+
+                formatUrl: function (url, delim) {
+                    delim = delim || '?';
+
+                    var queryString = this.getQueryString();
+
+                    if (queryString != null && queryString.length > 0) {
+                        return [url, queryString].join(delim);
+                    }
+
+                    return url;
+                },
+
+                redirect: function (url, delim) {
+                    window.location.replace(this.formatUrl(url, delim));
+                }
+
+            };
+
+            router.init();
+        })();
+    </script>
+</head>
+
+<body onload="displayWarning()" style="height: 100%;">
+<div id="nosupport" style="visibility: hidden;">
+    <table>
+        <tr>
+            <td>
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="90.2" height="74.9" viewBox="0 0 90 75" version="1.1">
+                        <g transform="scale(.1)">
+                            <path d="m409 7c54-25 106 20 130 66 106 170 213 340 320 510 17 28 32 63 19 96-14 36-55 51-91 51-224 1-448 0-672 0-35 1-76-3-100-33-26-32-15-77 5-108 107-173 216-344 324-517 16-26 35-53 65-65z"
+                                  fill="#4c4c4c"/>
+                            <path d="m419 57c26-20 55 4 68 27 109 174 218 348 328 522 9 17 23 35 17 55-11 20-36 18-55 19-224 0-447 0-670 0-20-1-46 1-57-19-5-18 6-34 14-48 109-174 218-348 327-522 9-12 17-25 28-34z"
+                                  fill="#f5f5f5"/>
+                            <path d="m429 179c25-12 58 8 56 35-1 81-5 161-10 242 2 32-49 39-57 9-7-73-6-146-11-219-1-24-4-56 22-67zM430 539 430 539 430 539c45-24 80 53 32 72-45 24-80-53-32-72z"
+                                  fill="#4c4c4c"/>
+                        </g>
+                    </svg>
+                </p>
+                <p>No se puede reproducir este curso.</p>
+                <p><a href="https://ipc.articulate.com/slw/3/es/cannotplay/">Conoce m?s</a></p>
+
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Especificaci&#243;n de requerimientos I</title>
+        <meta http-equiv="x-ua-compatible" content="IE=edge" />
+        <meta charset="UTF-8">
+
+        <script src="lms/APIConstants.js" charset="utf-8"></script>
+        <script src="lms/Configuration.js" charset="utf-8"></script>
+        <script src="lms/UtilityFunctions.js" charset="utf-8"></script>
+        <script src="lms/SCORM2004Functions.js" charset="utf-8"></script>
+        <script src="lms/SCORMFunctions.js" charset="utf-8"></script>
+        <script src="lms/AICCFunctions.js" charset="utf-8"></script>
+        <script src="lms/NONEFunctions.js" charset="utf-8"></script>
+        <script src="lms/LMSAPI.js" charset="utf-8"></script>
+        <script src="lms/API.js" charset="utf-8"></script>
+
+        <script type="text/javascript">
+            function LoadContent(){
+                window.scormdriver_content.document.location.href = 'story_flash.html';
+            }
+        </script>
+
+        <style>
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: 0;
+            }
+            iframe {
+                height: 0;
+                width: 0;
+                display: none;
+            }
+            iframe.fullscreen {
+                display: block;       /* iframes are inline by default */
+                background: #000;
+                border: none;         /* Reset default border */
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+
+    <body onload="Start()" onbeforeunload="Unload()" onunload="Unload()">
+        <iframe name="scormdriver_content" class="fullscreen" src="lms/blank.html" allowfullscreen="true"></iframe>
+        <iframe name="AICCComm" src="lms/AICCComm.html"></iframe>
+        <iframe name="rusticisoftware_aicc_results" src="lms/blank.html"></iframe>
+        <iframe name="NothingFrame" src="lms/blank.html">
+            Your browser must be able to view frames for this content to display.
+        </iframe>
+    </body>
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- Creado con Storyline 3 - http://www.articulate.com  -->
+  <!-- version: 3.10.22406.0 -->
+  <title>Especificaci&#243;n de requerimientos I</title>
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <style>
+    html, body { height: 100%; padding: 0; margin: 0 }
+    #app { height: 100%; width: 100%; }
+  </style>
+  <script src="lms/APIConstants.js" charset="utf-8"></script>
+        <script src="lms/Configuration.js" charset="utf-8"></script>
+        <script src="lms/UtilityFunctions.js" charset="utf-8"></script>
+        <script src="lms/SCORM2004Functions.js" charset="utf-8"></script>
+        <script src="lms/SCORMFunctions.js" charset="utf-8"></script>
+        <script src="lms/AICCFunctions.js" charset="utf-8"></script>
+        <script src="lms/NONEFunctions.js" charset="utf-8"></script>
+        <script src="lms/LMSAPI.js" charset="utf-8"></script>
+        <script src="lms/API.js" charset="utf-8"></script>
+
+        <script>
+          strContentLocation = "story_html5.html";
+          window.scormdriver_content = window;
+          function LoadContent(){}
+        </script>
+  <script>window.THREE = { };</script>
+</head>
+<body style="background: #FFFFFF" class="cs-HTML theme-classic">
+  <!-- 360 -->
+  <script>!function(e){function n(e,i){return e.test(i)}function i(e){var i=e||navigator.userAgent,o=i.split("[FBAN");if(void 0!==o[1]&&(i=o[0]),this.apple={phone:n(t,i),ipod:n(d,i),tablet:!n(t,i)&&n(s,i),device:n(t,i)||n(d,i)||n(s,i)},this.amazon={phone:n(h,i),tablet:!n(h,i)&&n(a,i),device:n(h,i)||n(a,i)},this.android={phone:n(h,i)||n(b,i),tablet:!n(h,i)&&!n(b,i)&&(n(a,i)||n(r,i)),device:n(h,i)||n(a,i)||n(b,i)||n(r,i)},this.windows={phone:n(l,i),tablet:n(p,i),device:n(l,i)||n(p,i)},this.other={blackberry:n(f,i),blackberry10:n(u,i),opera:n(c,i),firefox:n(A,i),chrome:n(w,i),device:n(f,i)||n(u,i)||n(c,i)||n(A,i)||n(w,i)},this.seven_inch=n(v,i),this.any=this.apple.device||this.android.device||this.windows.device||this.other.device||this.seven_inch,this.phone=this.apple.phone||this.android.phone||this.windows.phone,this.tablet=this.apple.tablet||this.android.tablet||this.windows.tablet,"undefined"==typeof window)return this}function o(){var e=new i;return e.Class=i,e}var t=/iPhone/i,d=/iPod/i,s=/iPad/i,b=/(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,r=/Android/i,h=/(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,a=/(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,l=/IEMobile/i,p=/(?=.*\bWindows\b)(?=.*\bARM\b)/i,f=/BlackBerry/i,u=/BB10/i,c=/Opera Mini/i,w=/(CriOS|Chrome)(?=.*\bMobile\b)/i,A=/(?=.*\bFirefox\b)(?=.*\bMobile\b)/i,v=new RegExp("(?:Nexus 7|BNTV250|Kindle Fire|Silk|GT-P1000)","i");"undefined"!=typeof module&&module.exports&&"undefined"==typeof window?module.exports=i:"undefined"!=typeof module&&module.exports&&"undefined"!=typeof window?module.exports=o():"function"==typeof define&&define.amd?define("isMobile",[],e.isMobile=o()):e.isMobile=o()}(this);
+    window.isMobile.apple.tablet = window.isMobile.apple.tablet ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    window.isMobile.apple.device = window.isMobile.apple.device || window.isMobile.apple.tablet;
+    window.isMobile.tablet = window.isMobile.tablet || window.isMobile.apple.tablet;
+    window.isMobile.any = window.isMobile.any || window.isMobile.apple.tablet;
+  </script>
+
+  <div id="focus-sink" aria-hidden="true" tabIndex=-1"></div>
+
+  <div id="preso"></div>
+  <script>
+    window.DS = {};
+    window.globals = {
+      DATA_PATH_BASE: '',
+      HAS_FRAME: true,
+      HAS_SLIDE: true,
+
+      lmsPresent: true,
+      tinCanPresent: false,
+      cmi5Present: false,
+      aoSupport: false,
+      scale: 'noscale',
+      captureRc: false,
+      browserSize: 'optimal',
+      bgColor: '#FFFFFF',
+      features: '',
+      themeName: 'classic',
+      preloaderColor: '#FFFFFF',
+      suppressAnalytics: false,
+      productChannel: 'perpetual',
+      publishSource: 'storyline',
+      aid: '',
+      cid: 'de7c3729-9841-467a-80ef-53ee3f639147',
+      playerVersion: '3.10.22406.0',
+      maxIosVideoElements: 5,
+
+      
+      parseParams: function(qs) {
+        if (window.globals.parsedParams != null) {
+          return window.globals.parsedParams;
+        }
+        qs = (qs || window.location.search.substr(1)).split('+').join(' ');
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1]).trim()] =
+            decodeURIComponent(tokens[2]).trim();
+        }
+        window.globals.parsedParams = params;
+        return params;
+      }
+
+    };
+
+    (function() {
+
+      var classTypes = [ 'desktop', 'mobile', 'phone', 'tablet' ];
+
+      var addDeviceClasses = function(prefix, testObj) {
+        var curr, i;
+        for (i = 0; i < classTypes.length; i++) {
+          curr = classTypes[i];
+          if (testObj[curr]) {
+            document.body.classList.add(prefix + curr);
+          }
+        }
+      };
+
+      var params = window.globals.parseParams(),
+          isDevicePreview = params.devicepreview === '1',
+          isPhoneOverride = params.deviceType === 'phone' || (isDevicePreview && params.phone == '1'),
+          isTabletOverride = (params.deviceType === 'tablet' || isDevicePreview) && !isPhoneOverride,
+          isMobileOverride = isPhoneOverride || isTabletOverride;
+
+      var deviceView = {
+        desktop: !window.isMobile.any && !isMobileOverride,
+        mobile: window.isMobile.any || isMobileOverride,
+        phone: isPhoneOverride || (window.isMobile.phone && !isTabletOverride),
+        tablet: isTabletOverride || window.isMobile.tablet
+      };
+
+      window.globals.deviceView = deviceView;
+      window.isMobile.desktop = !window.isMobile.any;
+      window.isMobile.mobile = window.isMobile.any;
+
+      addDeviceClasses('view-', deviceView);
+
+    })();
+  </script>
+  
+  <script src='story_content/user.js' type=text/javascript></script>
+  <div class="slide-loader"></div>
+
+  <script type="text/javascript">
+    if (window.globals.deviceView.isMobile) { var doc = document, loader = doc.body.querySelector('.slide-loader'); [ 1, 2, 3 ].forEach(function(n) { var d = doc.createElement('div'); d.style.backgroundColor = window.globals.preloaderColor; d.classList.add('mobile-loader-dot'); d.classList.add('dot' + n); loader.appendChild(d); }); }
+  </script>
+
+  <div class="mobile-load-title-overlay" style="display: none">
+    <div class="mobile-load-title">Especificaci&#243;n de requerimientos I</div>
+  </div>
+
+  <div class="mobile-chrome-warning"></div>
+
+  <script>
+    
+    if (window.autoSpider && window.vInterfaceObject) {
+      document.querySelector('.mobile-load-title-overlay').style.display = 'none';
+    }
+  </script>
+
+  <iframe name="AICCComm" src="lms/AICCComm.html" style="display:none;"></iframe>
+        <iframe name="rusticisoftware_aicc_results" src="lms/blank.html" style="display:none;"></iframe>
+        <iframe name="NothingFrame" src="lms/blank.html" style="display:none;"></iframe>
+
+  <link rel="stylesheet" href="html5/data/css/output.min.css" data-noprefix />
+</body>
+<script src="html5/lib/scripts/ds-bootstrap.min.js"></script>
+</html>
+
+<?xml version="1.0" encoding="utf-8"?><meta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><project id="6EjXscWbowv" courseid="639lFxoSmHh_course_id" thumburl="story_content/thumbnail.jpg" title="Especificación de requerimientos I" datepublished="2022-06-16T13:08:16" version="1.0.0.0" flashdata="story_content/data.swf" html5data="mobile/data.json" mobiledata="mobile/data.gz" enabledownload="false" duration="Acerca de 3 minutos" totalaudio="0" totalvideo="0"><description /><keywords /><slidemeta moniker="diapositiva" monikerplural="diapositivas" viewslides="28" slidecountdescription="28 diapositivas" /><author name="PC 1500}" email="" website="" /><application name="Articulate Storyline" version="3.10.22406.0" xmlversion="4.0" /></project></meta>
+<!DOCTYPE HTML>
+<html style="height: 100%;" lang="es">
+<head>
+    
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <!-- Creado con Storyline 3 - http://www.articulate.com  -->
+    <!-- version: 3.10.22406.0 -->
+
+    <title>Especificaci&#243;n de requerimientos I</title>
+    <style>
+        body {
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        html, body, table {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        #nosupport {
+            background: #f5f5f5;
+            margin: 50px 65px;
+            border: 1px solid #d5d5d5;
+            width: calc(100% - 130px);
+            height: calc(100% - 100px);
+        }
+
+        p {
+            font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
+            font-size: 12pt;
+            color: #303030;
+        }
+
+        a {
+            color: #2D9DDA;
+            text-decoration: none !important;
+        }
+
+    </style>
+    <script>
+        var html5Supported = true;
+
+    </script>
+    <!--[if lte IE 9]><script>html5Supported = false;</script><![endif]-->
+
+    <script type="text/javascript">
+
+        function routePlayer() {
+
+            var settings = {
+                lmsEnabled: true,
+                tincanEnabled: false,
+                aoEnabled: false,
+                runtimeOrder: [{"type":"html5","url":"story_html5.html"},{"type":"flash","url":"story_flash.html"}],
+                warnOnCommitFail: false
+            };
+
+            var PARAM_WARN_ON_COMMIT = {name: 'warncommit', value: 1},
+                    PARAM_LMS = {name: 'lms', value: 1},
+                    PARAM_TINCAN = {name: 'tincan', value: true},
+                    PARAM_AO = {name: 'aosupport', value: true};
+
+            var detection = {
+                agent: navigator.userAgent,
+
+                flashEnabled: function() {
+                    var description, version, flashAX,
+                            plugin = navigator.plugins["Shockwave Flash"];
+
+                    if (plugin != null) {
+                        description = plugin.description.split(" ");
+                        version = Number(description[description.length - 2]);
+
+                        return (version >= 10) || isNaN(version);
+                    } else {
+                        try {
+                            flashAX = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.10");
+                            return (flashAX != null);
+                        } catch (e) {
+                        }
+                    }
+
+                    return false;
+                },
+				
+                isFlashWaiting: function() {
+                    var html = '',
+                    divFlash = document.getElementById('flashCheck'),
+                    player;
+
+                    html += '<object width="100px" height="100px" id="player" type="application/x-shockwave-flash">';
+                    html += '<param name="name" value="player" />';
+                    html += '<param name="wmode" value="opaque" />';
+                    html += '<param name="allowScriptAccess" value="always" />';
+                    html += '</object>';
+
+                    divFlash.innerHTML = html;
+                    player = document.getElementById('player');
+
+                    return player != null && player.getBoundingClientRect().width > 0;
+                },
+
+                html5Enabled: function() {
+                    return html5Supported;
+                },
+
+                ampEnabled: function() {
+                    return ((this.isIOS() && this.isIPad()) || this.isAndroid());
+                },
+
+                isIOS: function() {
+                    return (this.agent.indexOf("AppleWebKit/") > -1 && this.agent.indexOf("Mobile/") > -1)
+                },
+
+                isAndroid: function() {
+                    return (this.agent.indexOf("Android") > -1);
+                },
+
+                isIPad: function() {
+                    return (this.agent.indexOf("iPad") > -1);
+                },
+
+                isEdge: function() {
+                    var hasGlCapability = (function() {
+                        var canv = document.createElement('canvas'),
+                            gl = canv.getContext('webgl') || canv.getContext('experimental-webgl');
+                        canv = null;
+                        return gl != null;
+                    }());
+                    return window.MSBlobBuilder != null && window.msCrypto == null && hasGlCapability;
+                }
+            };
+
+            var router = {
+
+                init: function() {
+                    var i, url, launchInfo,
+                        redirected = false,
+                        order = settings.runtimeOrder,
+                        launchMap = {
+                            flash: {
+                                isEnabled: 'flashEnabled',
+                                getParams: 'getFlashParams',
+                                delim: '?'
+                            },
+                            html5: {
+                                isEnabled: 'html5Enabled',
+                                getParams: 'getHtml5Params',
+                                delim: '?'
+                            },
+                            amp: {
+                                isEnabled: 'ampEnabled',
+                                getParams: 'getAmpParams',
+                                delim: '#'
+                            }
+                        };
+
+                    if (document.location.search.toLowerCase().indexOf('forceflash') != -1) {
+                        this.moveFlashToStartOfOrder(order);
+                    }
+
+                    for (i = 0; i < order.length; i++) {
+                        launchInfo = launchMap[order[i].type];
+                        url = order[i].url;
+
+                        if (detection[launchInfo.isEnabled]()) {
+                            this.redirect(url, this[launchInfo.getParams](), launchInfo.delim);
+                            redirected = true;
+                            break;
+                        }
+                    }
+
+                    if (!redirected) {
+                        if (
+                            detection.isEdge() &&
+                            order[0].type === 'flash' &&
+                            detection.isFlashWaiting()
+                        ) {
+                            launchInfo = launchMap[order[0].type];
+                            url = order[0].url;
+                            this.redirect(url, this[launchInfo.getParams](), launchInfo.delim);
+                        } else {
+                            document.getElementById('nosupport').style.visibility = 'visible';
+                        }
+                    }
+                },
+
+                moveFlashToStartOfOrder: function (order) {
+                    var i,
+                        flashIndex = -1;
+                    for (i = 0; i < order.length; i++) {
+                        if (order[i].type == "flash") {
+                            flashIndex = i;
+                            break;
+                        }
+                    }
+                    if (flashIndex != -1) {
+                        order.splice(0, 0, order.splice(flashIndex, 1)[0]);
+                    }
+                },
+
+                getQueryString: function (params) {
+                    params = params || [];
+                    var i,
+                            queryString = document.location.search.substr(1),
+                            paramArr = queryString.length > 0 ? queryString.split('&') : [];
+
+                    for (i = 0; i < params.length; i++) {
+                        paramArr.push([params[i].name, params[i].value].join('='));
+                    }
+
+                    return paramArr.join('&');
+                },
+
+                formatUrl: function (url, params, delim) {
+                    delim = delim || '?';
+
+                    var queryString = this.getQueryString(params);
+
+                    if (queryString != null && queryString.length > 0) {
+                        return [url, queryString].join(delim);
+                    }
+
+                    return url;
+                },
+
+                redirect: function (url, params, delim) {
+                    window.location.replace(this.formatUrl(url, params, delim));
+                },
+
+                getFlashParams: function () {
+                    return [];
+                },
+
+                getHtml5Params: function () {
+                    var params = [];
+                    if (settings.tincanEnabled) {
+                        params.push(PARAM_TINCAN);
+                    } else if (settings.lmsEnabled) {
+                        params.push(PARAM_LMS);
+                        if (settings.warnOnCommitFail) {
+                            params.push(PARAM_WARN_ON_COMMIT);
+                        }
+                    }
+
+                    return params;
+                },
+
+                getAmpParams: function () {
+                    var tincanProto = settings.aoEnabled || settings.tincanEnabled,
+                            params = [];
+                    // build AMP params
+                    if (tincanProto) {
+                        params.push(PARAM_TINCAN);
+                        if (settings.aoEnabled) {
+                            params.push(PARAM_AO);
+                        }
+                    }
+                    return params;
+                }
+            };
+
+            router.init();
+        };
+
+    </script>
+</head>
+<body onload="routePlayer()" style="height: 100%;">
+<div id="nosupport" style="visibility: hidden;">
+    <table>
+        <tr>
+            <td>
+                <p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="90.2" height="74.9" viewBox="0 0 90 75" version="1.1">
+                        <g transform="scale(.1)">
+                            <path d="m409 7c54-25 106 20 130 66 106 170 213 340 320 510 17 28 32 63 19 96-14 36-55 51-91 51-224 1-448 0-672 0-35 1-76-3-100-33-26-32-15-77 5-108 107-173 216-344 324-517 16-26 35-53 65-65z"
+                                  fill="#4c4c4c"></path>
+                            <path d="m419 57c26-20 55 4 68 27 109 174 218 348 328 522 9 17 23 35 17 55-11 20-36 18-55 19-224 0-447 0-670 0-20-1-46 1-57-19-5-18 6-34 14-48 109-174 218-348 327-522 9-12 17-25 28-34z"
+                                  fill="#f5f5f5"></path>
+                            <path d="m429 179c25-12 58 8 56 35-1 81-5 161-10 242 2 32-49 39-57 9-7-73-6-146-11-219-1-24-4-56 22-67zM430 539 430 539 430 539c45-24 80 53 32 72-45 24-80-53-32-72z"
+                                  fill="#4c4c4c"></path>
+                        </g>
+                    </svg>
+                </p>
+                <p>No se puede reproducir este curso.</p>
+                <p><a href="https://ipc.articulate.com/slw/3/es/cannotplay/">Conoce m?s</a></p>
+
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="flashCheck" style="visibility: hidden" >
+</div>
+</body>
+</html>
+
+<!DOCTYPE HTML>
+<html style="height: 100%;" lang="es">
+<head>
+<!-- Creado con Storyline 3 - http://www.articulate.com  -->
+<!-- version: 3.10.22406.0 -->
+<title>Especificaci&#243;n de requerimientos I</title>
+<meta http-equiv="x-ua-compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+
+<style>
+	body, div, swf  { margin: 0px; }
+	.no-scroll { overflow: hidden; }
+	object {outline: none;}
+	table { border: 0; width: 100%; height: 100%; align: center; border-spacing: 0; padding: 0; }
+</style>
+
+<script type="text/javascript">
+
+var g_bLMS = true;
+var g_bTinCan = false;
+var g_bAOSupport = false;
+var g_strContentFolder = "story_content";
+var g_bProjector = false;
+var g_strSwfFile = "story.swf";
+var g_nWidth = 1360;
+var g_nHeight = 771;
+var g_strScale = "noscale";	// noscale | show all
+var g_strResizeType = "static" // static | fit
+var g_strBrowserSize = "optimal";	// default, fullscreen, optimal
+var g_strBgColor = "#FFFFFF";
+var g_bCaptureRC = false;
+var g_strFlashVars = "";
+var g_strWMode = "window"; // transparent | window (use "window" for optimal performance, transparent for webobject support)
+var g_strThemeName = "classic"; // unified | classic
+var g_strPreloaderColor = "#FFFFFF";
+var g_bSuppressAnalytics = false;
+var g_strProductChannel = "perpetual";
+var g_strPlayerVersion = "3.10.22406.0";
+var g_strPublishSource = "storyline";
+var g_strAID = "";
+var g_strCID = "de7c3729-9841-467a-80ef-53ee3f639147";
+
+if (g_strResizeType === ["__RESIZE", "_TYPE__"].join("")) {
+	g_strResizeType = g_strScale === "noscale" ? "static" : "fit";
+}
+
+if (g_strThemeName === ["__THEME", "_NAME__"].join("")) {
+	g_strThemeName = "classic";
+}
+
+var g_bScrollbars = g_strResizeType === "static";
+var g_bWarnOnCommitFail = false;
+var g_strAlign = "middle";
+var g_strQuality = "best";
+
+</script>
+
+<!-- 360 -->
+<script src='story_content/user.js' type=text/javascript></script>
+<script src="story_content/story.js" type="text/javascript"></script>
+
+</head>
+
+<body style="height: 100%;" onunload="DoOnClose()" onbeforeunload="DoOnClose()" onload="DoOnLoad()">
+
+<script type="text/javascript">
+
+document.bgColor = g_strBgColor;
+var target = document.body;
+
+if (g_bScrollbars)
+{
+	var table = document.createElement('table');
+	target = table.insertRow(0).insertCell(0);
+	target.setAttribute('align', 'center');
+	document.body.appendChild(table);
+}
+
+WriteSwfObject(
+	g_strSwfFile,
+	g_nWidth,
+	g_nHeight,
+	g_strScale,
+	g_strAlign,
+	g_strQuality,
+	g_strBgColor,
+	g_bCaptureRC,
+	g_strWMode,
+	g_strFlashVars,
+	target,
+	true
+);
+
+ResizeBrowser(g_strBrowserSize);
+</script>
+
+<div id='divEmail' style='position: absolute; width: 10px; height: 10px; left: 10px; top: 10px; visibility: hidden;' ></div>
+<div id='divWebObjects'></div>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- Creado con Storyline 3 - http://www.articulate.com  -->
+  <!-- version: 3.10.22406.0 -->
+  <title>Especificaci&#243;n de requerimientos I</title>
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no, minimal-ui" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <style>
+    html, body { height: 100%; padding: 0; margin: 0 }
+    #app { height: 100%; width: 100%; }
+  </style>
+  
+  <script>window.THREE = { };</script>
+</head>
+<body style="background: #FFFFFF" class="cs-HTML theme-classic">
+  <!-- 360 -->
+  <script>!function(e){function n(e,i){return e.test(i)}function i(e){var i=e||navigator.userAgent,o=i.split("[FBAN");if(void 0!==o[1]&&(i=o[0]),this.apple={phone:n(t,i),ipod:n(d,i),tablet:!n(t,i)&&n(s,i),device:n(t,i)||n(d,i)||n(s,i)},this.amazon={phone:n(h,i),tablet:!n(h,i)&&n(a,i),device:n(h,i)||n(a,i)},this.android={phone:n(h,i)||n(b,i),tablet:!n(h,i)&&!n(b,i)&&(n(a,i)||n(r,i)),device:n(h,i)||n(a,i)||n(b,i)||n(r,i)},this.windows={phone:n(l,i),tablet:n(p,i),device:n(l,i)||n(p,i)},this.other={blackberry:n(f,i),blackberry10:n(u,i),opera:n(c,i),firefox:n(A,i),chrome:n(w,i),device:n(f,i)||n(u,i)||n(c,i)||n(A,i)||n(w,i)},this.seven_inch=n(v,i),this.any=this.apple.device||this.android.device||this.windows.device||this.other.device||this.seven_inch,this.phone=this.apple.phone||this.android.phone||this.windows.phone,this.tablet=this.apple.tablet||this.android.tablet||this.windows.tablet,"undefined"==typeof window)return this}function o(){var e=new i;return e.Class=i,e}var t=/iPhone/i,d=/iPod/i,s=/iPad/i,b=/(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,r=/Android/i,h=/(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,a=/(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,l=/IEMobile/i,p=/(?=.*\bWindows\b)(?=.*\bARM\b)/i,f=/BlackBerry/i,u=/BB10/i,c=/Opera Mini/i,w=/(CriOS|Chrome)(?=.*\bMobile\b)/i,A=/(?=.*\bFirefox\b)(?=.*\bMobile\b)/i,v=new RegExp("(?:Nexus 7|BNTV250|Kindle Fire|Silk|GT-P1000)","i");"undefined"!=typeof module&&module.exports&&"undefined"==typeof window?module.exports=i:"undefined"!=typeof module&&module.exports&&"undefined"!=typeof window?module.exports=o():"function"==typeof define&&define.amd?define("isMobile",[],e.isMobile=o()):e.isMobile=o()}(this);
+    window.isMobile.apple.tablet = window.isMobile.apple.tablet ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    window.isMobile.apple.device = window.isMobile.apple.device || window.isMobile.apple.tablet;
+    window.isMobile.tablet = window.isMobile.tablet || window.isMobile.apple.tablet;
+    window.isMobile.any = window.isMobile.any || window.isMobile.apple.tablet;
+  </script>
+
+  <div id="focus-sink" aria-hidden="true" tabIndex=-1"></div>
+
+  <div id="preso"></div>
+  <script>
+    window.DS = {};
+    window.globals = {
+      DATA_PATH_BASE: '',
+      HAS_FRAME: true,
+      HAS_SLIDE: true,
+
+      lmsPresent: true,
+      tinCanPresent: false,
+      cmi5Present: false,
+      aoSupport: false,
+      scale: 'noscale',
+      captureRc: false,
+      browserSize: 'optimal',
+      bgColor: '#FFFFFF',
+      features: '',
+      themeName: 'classic',
+      preloaderColor: '#FFFFFF',
+      suppressAnalytics: false,
+      productChannel: 'perpetual',
+      publishSource: 'storyline',
+      aid: '',
+      cid: 'de7c3729-9841-467a-80ef-53ee3f639147',
+      playerVersion: '3.10.22406.0',
+      maxIosVideoElements: 5,
+
+      
+      parseParams: function(qs) {
+        if (window.globals.parsedParams != null) {
+          return window.globals.parsedParams;
+        }
+        qs = (qs || window.location.search.substr(1)).split('+').join(' ');
+        var params = {},
+            tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+          params[decodeURIComponent(tokens[1]).trim()] =
+            decodeURIComponent(tokens[2]).trim();
+        }
+        window.globals.parsedParams = params;
+        return params;
+      }
+
+    };
+
+    (function() {
+
+      var classTypes = [ 'desktop', 'mobile', 'phone', 'tablet' ];
+
+      var addDeviceClasses = function(prefix, testObj) {
+        var curr, i;
+        for (i = 0; i < classTypes.length; i++) {
+          curr = classTypes[i];
+          if (testObj[curr]) {
+            document.body.classList.add(prefix + curr);
+          }
+        }
+      };
+
+      var params = window.globals.parseParams(),
+          isDevicePreview = params.devicepreview === '1',
+          isPhoneOverride = params.deviceType === 'phone' || (isDevicePreview && params.phone == '1'),
+          isTabletOverride = (params.deviceType === 'tablet' || isDevicePreview) && !isPhoneOverride,
+          isMobileOverride = isPhoneOverride || isTabletOverride;
+
+      var deviceView = {
+        desktop: !window.isMobile.any && !isMobileOverride,
+        mobile: window.isMobile.any || isMobileOverride,
+        phone: isPhoneOverride || (window.isMobile.phone && !isTabletOverride),
+        tablet: isTabletOverride || window.isMobile.tablet
+      };
+
+      window.globals.deviceView = deviceView;
+      window.isMobile.desktop = !window.isMobile.any;
+      window.isMobile.mobile = window.isMobile.any;
+
+      addDeviceClasses('view-', deviceView);
+
+    })();
+  </script>
+  
+  <script src='story_content/user.js' type=text/javascript></script>
+  <div class="slide-loader"></div>
+
+  <script type="text/javascript">
+    if (window.globals.deviceView.isMobile) { var doc = document, loader = doc.body.querySelector('.slide-loader'); [ 1, 2, 3 ].forEach(function(n) { var d = doc.createElement('div'); d.style.backgroundColor = window.globals.preloaderColor; d.classList.add('mobile-loader-dot'); d.classList.add('dot' + n); loader.appendChild(d); }); }
+  </script>
+
+  <div class="mobile-load-title-overlay" style="display: none">
+    <div class="mobile-load-title">Especificaci&#243;n de requerimientos I</div>
+  </div>
+
+  <div class="mobile-chrome-warning"></div>
+
+  <script>
+    
+    if (window.autoSpider && window.vInterfaceObject) {
+      document.querySelector('.mobile-load-title-overlay').style.display = 'none';
+    }
+  </script>
+
+  
+
+  <link rel="stylesheet" href="html5/data/css/output.min.css" data-noprefix />
+</body>
+<script src="html5/lib/scripts/ds-bootstrap.min.js"></script>
+</html>
