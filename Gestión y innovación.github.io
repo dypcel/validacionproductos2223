@@ -1,1 +1,0 @@
-<iframe src="https://ucabvirtual.ucab.edu.ve/wp-admin/admin-ajax.php?action=h5p_embed&id=232" width="845" height="698" frameborder="0" allowfullscreen="allowfullscreen" title="Glosario de estrategias didácticas"></iframe><script src="https://ucabvirtual.ucab.edu.ve/wp-content/plugins/h5p/h5p-php-library/js/h5p-resizer.js" charset="UTF-8"></script>
