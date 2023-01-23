@@ -119,7 +119,7 @@
       <file href="mobile/6nnZ88sad5P_X_80_P_263_0_814_937.jpg" />
       <file href="mobile/5k1WomksejV_80_P_0_87_1071_1412.jpg" />
       <file href="mobile/5ofKtnny7VN_80_P_0_310_1000_1189.jpg" />
-      <file href="mobile/68IWbtXGlIx.png" />
+      <file href="mobile/68IWbtXGlIx_P_0_0_617_696.png" />
       <file href="mobile/68IWbtXGlIx_P_0_0_617_697.png" />
       <file href="mobile/5xgeifRFVjj_80_P_33_0_1322_601.jpg" />
       <file href="mobile/6Qksw724YJ3_80_P_0_281_1000_1218.jpg" />
@@ -221,6 +221,7 @@
       <file href="html5/data/js/data.js" />
       <file href="html5/data/js/frame.js" />
       <file href="html5/data/js/paths.js" />
+      <file href="html5/lib/hls/hls.min.js" />
       <file href="html5/lib/scripts/bootstrapper.min.js" />
       <file href="html5/lib/scripts/frame.desktop.min.js" />
       <file href="html5/lib/scripts/frame.mobile.min.js" />

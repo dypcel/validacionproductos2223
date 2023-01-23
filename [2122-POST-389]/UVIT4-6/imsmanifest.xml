@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest identifier="_5dSK6u6BTUf_course_id" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+<manifest identifier="_6dficpfQB3e_course_id" version="1.0" xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
   <metadata>
     <schema>ADL SCORM</schema>
     <schemaversion>1.2</schemaversion>
@@ -53,13 +53,13 @@
   <organizations default="El_proceso_de_negociación_en_los_proyectos_ORG">
     <organization identifier="El_proceso_de_negociación_en_los_proyectos_ORG">
       <title>El proceso de negociación en los proyectos</title>
-      <item identifier="De_la_experiencia_del_candidato_con_los_procesos_asociados_a_la_captación_y_sele_SCO" isvisible="true" identifierref="__5dSK6u6BTUf_course_id_RES">
+      <item identifier="De_la_experiencia_del_candidato_con_los_procesos_asociados_a_la_captación_y_sele_SCO" isvisible="true" identifierref="__6dficpfQB3e_course_id_RES">
         <title>El proceso de negociación en los proyectos</title>
       </item>
     </organization>
   </organizations>
   <resources>
-    <resource identifier="__5dSK6u6BTUf_course_id_RES" type="webcontent" href="launcher.html" adlcp:scormtype="sco">
+    <resource identifier="__6dficpfQB3e_course_id_RES" type="webcontent" href="launcher.html" adlcp:scormtype="sco">
       <file href="story_content/thumbnail.jpg" />
       <file href="mobile/675IdHFYGuZ.png" />
       <file href="mobile/5f9AimIFqyN.jpg" />
@@ -157,6 +157,7 @@
       <file href="html5/data/js/6iAvS0AyQEz.js" />
       <file href="html5/data/js/6ILOJiICPpo.js" />
       <file href="html5/data/js/6kuhzXsZ3xA.js" />
+      <file href="html5/data/js/6LtBkL7cnzc.js" />
       <file href="html5/data/js/6OoKfwqQCU4.js" />
       <file href="html5/data/js/6oy2HaUtBEA.js" />
       <file href="html5/data/js/6PBsUNl8nrE.js" />
